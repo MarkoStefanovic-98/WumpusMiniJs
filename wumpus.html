@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>wumpus</title>
+    <style>
+        img {
+            width: 100px;
+            height: 100px;
+        }
+
+        div {
+            position: absolute;
+        }
+    </style>
+    <script>
+        let ancienligne = 0;
+        let anciencol = 0;
+
+
+        function affichage() {
+
+            //boucle affichage
+            message = "";
+            for (ligne = 1; ligne <= 4; ligne++) {
+                for (col = 1; col <= 4; col++) {
+                    message += morpion[col][ligne] + "|";
+
+                }
+                message += "<br>******</br>";
+            }
+            document.getElementById("affichetab").innerHTML = message;
+        }
+
+
+        function change(id_modif) {
+            lignejoue = parseInt(id_modif.charAt(4));
+            coljoue = parseInt(id_modif.charAt(6));
+            difligne = Math.abs(lignejoue - ancienligne);
+            difcole = Math.abs(coljoue - anciencol);
+
+
+            // alert('dif'+ difcole+' '+difligne);
+            // alert('new' +lignejoue + coljoue);
+            // alert('old'+ anciencol+' '+ancienligne);
+
+            if (difligne === 1 && difcole === 0 || difligne === 0 && difcole === 1) {
+
+                if (morpion[lignejoue][coljoue] === "T") {
+                    alert("Gagné !!!!");
+                    location.reload();
+                } else if (morpion[lignejoue][coljoue] === "P") {
+                    alert("Perdu !!!!");
+                    location.reload();
+                }
+                document.getElementById(id_modif).src = "wumpus.png";
+
+                document.getElementById("img-" + ancienligne + "-" + anciencol).src = "case-blanche.jpg";
+                compteur = 0;
+
+                for (ligne = Math.max(lignejoue - 1, 1); ligne <= Math.min(lignejoue + 1, 4); ligne++) {
+                    for (col = Math.max(coljoue - 1, 1); col <= Math.min(coljoue + 1, 4); col++)
+                        if (morpion[ligne][col] === "P") {
+                            compteur++;
+                        }
+                }
+
+                if (compteur > 0) {
+                    document.getElementById("affichemessage").innerHTML = "<h1>Je sens qu'il y a " + compteur + " gouffre(s) autour de moi!!!</h1>";
+                } else {
+                    document.getElementById("affichemessage").innerHTML = "";
+                }
+
+                ancienligne = lignejoue;
+                anciencol = coljoue;
+                morpion[ancienligne][anciencol] = 2;
+                morpion[lignejoue][coljoue] = 1;
+
+                affichage();
+            } else {
+                alert('déplacement interdit, seulement case par case, sans diagonale');
+            }
+        }
+
+    </script>
+
+</head>
+<body>
+<script>
+    morpion = new Array(4);
+
+    morpion[1] = new Array(4);
+    morpion[2] = new Array(4);
+    morpion[3] = new Array(4);
+    morpion[4] = new Array(4);
+
+    for (ligne = 1; ligne <= 4; ligne++) {
+        for (col = 1; col <= 4; col++)
+            morpion[ligne][col] = 0;
+    }
+
+    // placement du wumpus
+
+    colal = Math.floor(Math.random() * 4) + 1;
+    ligneal = Math.floor(Math.random() * 4) + 1;
+
+    morpion[ligneal][colal] = 1;
+
+    anciencol = colal;
+    ancienligne = ligneal;
+
+    //placement des puits
+    for (i = 1; i <= 2; i++) {
+        do {
+            colal = Math.floor(Math.random() * 4) + 1;
+            ligneal = Math.floor(Math.random() * 4) + 1;
+
+        }
+        while (morpion[colal][ligneal] !== 0);
+        morpion[colal][ligneal] = "P";
+    }
+
+    //placement du trésor
+
+    do {
+        colal = Math.floor(Math.random() * 4) + 1;
+        ligneal = Math.floor(Math.random() * 4) + 1;
+
+    }
+    while (morpion[colal][ligneal] !== 0);
+    morpion[colal][ligneal] = "T";
+
+
+    for (ligne = 1; ligne <= 4; ligne++) {
+        for (col = 1; col <= 4; col++) {// affichage du plateau
+            str = " <img src='noir_absolu.jpg'  id='img-" + col + "-" + ligne + "'";
+            str = str + " onclick='change(id)' />";
+            document.write(str);
+        }
+        document.write("<br>");
+    }
+    document.getElementById("img-" + ancienligne + "-" + anciencol).src = "wumpus.png";
+    affichage();
+
+
+</script>
+
+<h3>Information de ta situation :</h3>
+<div id="affichemessage" class="message">
+
+</div>
+
+<div id="affichetab" style="margin-top: 100px">
+</div>
+
+
+</body>
+</html>
