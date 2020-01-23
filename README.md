@@ -1,1 +1,1 @@
-# WumpusMiniJs
+# WumpusMiniJs jeux
